@@ -1,0 +1,104 @@
+name: Windows environment
+on: 
+  push:
+    branches: 
+      - master
+      - release
+env:
+  BUID_DIR: d:\works
+  SOURCE_DIR: d:\works\3rdparty
+
+jobs:
+  fx_build:
+    name: Iceweasel build
+    runs-on: windows-latest
+    steps:        
+    - uses: actions/checkout@v2
+
+    - name: Create directory
+      id: mkdir
+      run: |
+        mkdir "%BUID_DIR%"
+        cd /d %GITHUB_WORKSPACE%
+        if exist mozconfig32 set m_bits=win32
+        if exist mozconfig64 set m_bits=win64
+        echo ##[set-env name=MY_BITS;]%m_bits%
+        echo ##[set-env name=LIBPORTABLE_PATH;]%BUID_DIR%\mozillabuild\clang
+      shell: cmd
+     
+    - name: Download msysdo
+      id: msysdo
+      shell: cmake -P {0}
+      run: |
+        set(clang_url "https://sourceforge.net/projects/libportable/files/Tools/mozillabuild/msysdo.7z")
+        file(DOWNLOAD "${clang_url}" $ENV{BUID_DIR}/msysdo.7z SHOW_PROGRESS)
+        execute_process(COMMAND 7z x ./msysdo.7z -aoa WORKING_DIRECTORY $ENV{BUID_DIR})
+            
+    - name: Start cmake build
+      id: cmake_build
+      run: |
+        cd /d %GITHUB_WORKSPACE%
+        type config\milestone.txt|findstr "[1-9]">tmp_1.txt
+        set /p m_ver=<tmp_1.txt
+        del /q tmp_1.txt >nul
+        echo ##[set-env name=MY_VER;]%m_ver%
+        if "%MY_BITS%" == "win32" call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32"
+        if "%MY_BITS%" == "win64" call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64"
+        mkdir ..\build&&cd ..\build
+        cmake ../actions_test -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
+        nmake
+        cd /d %GITHUB_WORKSPACE%
+        .\scripts\dothing.bat "%SOURCE_DIR%"
+      shell: cmd
+
+    - name: start package
+      id: package
+      run: |
+        cd /d %GITHUB_WORKSPACE%\..\build
+        7z a -aoa main-%MY_VER%-%MY_BITS%.7z main.exe
+      shell: cmd
+      
+    - name: Upload
+      uses: actions/upload-artifact@v1
+      with:
+        path: ${{ github.workspace }}/../build/main-${{ env.MY_VER }}-${{ env.MY_BITS }}.7z
+        name: main-${{ env.MY_VER }}-${{ env.MY_BITS }}.7z
+ 
+    - name: Get current time
+      uses: yxl0756/get-time-action@v1.0
+      id: current-time
+      with:
+        timeZone: 8
+        format: YYYYMMDDHHmmss
+
+    - name: Create Release
+      id: create_release
+      uses: yxl0756/create-release@1a72e235c178bf2ae6c51a8ae36febc24568c5fe
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN_YXL0756 }}
+      with:
+        tag_name: ${{ steps.current-time.outputs.time }}
+        release_name: Release ${{ steps.current-time.outputs.time }}
+        target_commitish: release
+        draft: false
+        prerelease: false
+        
+    - name: Store Release url    
+      run: |
+        echo "${{ steps.create_release.outputs.upload_url }}" > ./upload_url
+        
+    - uses: actions/upload-artifact@v1
+      with:
+        path: ./upload_url
+        name: upload_url
+                
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN_YXL0756 }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ github.workspace }}/../build/main-${{ env.MY_VER }}-${{ env.MY_BITS }}.7z
+        asset_name: main-${{ env.MY_VER }}-${{ env.MY_BITS }}.7z
+        asset_content_type: application/x-gtar
