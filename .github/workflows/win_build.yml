@@ -42,8 +42,10 @@ jobs:
         set /p m_ver=<tmp_1.txt
         del /q tmp_1.txt >nul
         echo ##[set-env name=MY_VER;]%m_ver%
+        if not defined VCToolsRedistDir echo VCToolsRedistDir not defined.
         if "%MY_BITS%" == "win32" call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32"
         if "%MY_BITS%" == "win64" call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64"
+        if defined VCToolsRedistDir echo VCToolsRedistDir defined.
         mkdir ..\build&&cd ..\build
         cmake ../actions_test -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
         nmake
