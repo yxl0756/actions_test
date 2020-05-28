@@ -57,8 +57,8 @@ jobs:
         cd /d "%GITHUB_WORKSPACE%\..\build"
         mkdir "%GITHUB_WORKSPACE%\..\build\app"
         copy y main.exe app\main.exe
-        xcopy /EHY "C:\Program Files (x86)\Microsoft Visual Studio\2019/Enterprise\VC\Redist\MSVC\14.25.28508\x64\Microsoft.VC142.CRT" app\x64\
-        xcopy /EHY "C:\Program Files (x86)\Microsoft Visual Studio\2019/Enterprise\VC\Redist\MSVC\14.25.28508\x86\Microsoft.VC142.CRT" app\x86\
+        xcopy /EHY "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Redist\MSVC\14.25.28508\x64\Microsoft.VC142.CRT" app\x64\
+        xcopy /EHY "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Redist\MSVC\14.25.28508\x86\Microsoft.VC142.CRT" app\x86\
         7z a -aoa main-%MY_VER%-%MY_BITS%.7z app
       shell: cmd
       
