@@ -48,7 +48,7 @@ jobs:
         cmake ../actions_test -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
         nmake
         cd /d %GITHUB_WORKSPACE%
-        dir .\scripts\dothing.bat
+        .\scripts\dothing.bat
       shell: cmd
 
     - name: start package
