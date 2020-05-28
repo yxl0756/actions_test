@@ -45,7 +45,7 @@ jobs:
         if not defined VCToolsRedistDir echo VCToolsRedistDir not defined.
         if "%MY_BITS%" == "win32" call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32"
         if "%MY_BITS%" == "win64" call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64"
-        if defined VCToolsRedistDir echo VCToolsRedistDir defined.
+        echo ##[set-env name=VC_REDISTDIR;]%VCToolsRedistDir%
         mkdir ..\build&&cd ..\build
         cmake ../actions_test -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
         nmake
@@ -59,8 +59,8 @@ jobs:
         cd /d "%GITHUB_WORKSPACE%\..\build"
         mkdir "%GITHUB_WORKSPACE%\..\build\app"
         copy y main.exe app\main.exe
-        xcopy /EHY "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Redist\MSVC\14.25.28508\x64\Microsoft.VC142.CRT" app\x64\
-        xcopy /EHY "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Redist\MSVC\14.25.28508\x86\Microsoft.VC142.CRT" app\x86\
+        xcopy /EHY "%VC_REDISTDIR%x64\Microsoft.VC142.CRT" app\x64\
+        xcopy /EHY "%VC_REDISTDIR%x86\Microsoft.VC142.CRT" app\x86\
         7z a -aoa main-%MY_VER%-%MY_BITS%.7z app
       shell: cmd
       
