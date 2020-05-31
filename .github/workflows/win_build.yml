@@ -85,7 +85,7 @@ jobs:
       with:
         tag_name: ${{ steps.current-time.outputs.time }}
         release_name: Release ${{ steps.current-time.outputs.time }}
-        target_commitish: release
+        commitish: master
         draft: false
         prerelease: false
         
