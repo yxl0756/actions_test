@@ -12,7 +12,7 @@ IF not exist "!BUID_DIR!" mkdir "!BUID_DIR!"&echo BUID_DIR: !BUID_DIR!
 @echo
 @echo .........................
 @echo msvc version:
-dir "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Redist\MSVC" /a
+dir "C:\Program Files (x86)\Microsoft Visual Studio" /a
 @echo windows sdk dll:
 dir "c:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x64" /a
 @echo all environment:
