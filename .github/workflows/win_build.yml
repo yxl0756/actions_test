@@ -54,6 +54,7 @@ jobs:
     - name: start package
       id: package
       run: |
+        cd /d "%GITHUB_WORKSPACE%\..\build"
         7z a -aoa main-%MY_VER%-%MY_BITS%.7z app
       shell: cmd
       
