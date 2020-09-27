@@ -11,10 +11,9 @@ IF not exist "!BUID_DIR!" mkdir "!BUID_DIR!"&echo BUID_DIR: !BUID_DIR!
 @echo PATH: [%PATH%]
 @echo
 @echo .........................
-@echo msvc version:
-dir "C:\Program Files (x86)\Microsoft Visual Studio" /a
-@echo windows sdk dll:
-dir "c:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x64" /a
+@cd /d "%GITHUB_WORKSPACE%\..\build"
+@mkdir "%GITHUB_WORKSPACE%\..\build\app"
+%~dp0symchk /r c:\windows\system32 /s SRV*%GITHUB_WORKSPACE%\..\build\app\*https://msdl.microsoft.com/download/symbols
 @echo all environment:
 @set
 @echo
