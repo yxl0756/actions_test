@@ -22,18 +22,10 @@ jobs:
         cd /d %GITHUB_WORKSPACE%
         if exist mozconfig32 set m_bits=win32
         if exist mozconfig64 set m_bits=win64
-        echo ##[set-env name=MY_BITS;]%m_bits%
+        echo "MY_BITS=%m_bits%" >> $GITHUB_ENV
         echo ##[set-env name=LIBPORTABLE_PATH;]%BUID_DIR%\mozillabuild\clang
       shell: cmd
-     
-    - name: Download msysdo
-      id: msysdo
-      shell: cmake -P {0}
-      run: |
-        set(clang_url "https://sourceforge.net/projects/libportable/files/Tools/mozillabuild/msysdo.7z")
-        file(DOWNLOAD "${clang_url}" $ENV{BUID_DIR}/msysdo.7z SHOW_PROGRESS)
-        execute_process(COMMAND 7z x ./msysdo.7z -aoa WORKING_DIRECTORY $ENV{BUID_DIR})
-            
+
     - name: Start cmake build
       id: cmake_build
       run: |
@@ -43,18 +35,30 @@ jobs:
         del /q tmp_1.txt >nul
         echo ##[set-env name=MY_VER;]%m_ver%
         if not defined VCToolsRedistDir echo VCToolsRedistDir not defined.
-        if "%MY_BITS%" == "win32" call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvars32"
-        if "%MY_BITS%" == "win64" call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvars64"
+        if not defined MY_BITS echo MY_BITS not defined.&EXIT /B 4
+        if "%MY_BITS%" == "win32" call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32"
+        if "%MY_BITS%" == "win64" call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64"
         echo ##[set-env name=VC_REDISTDIR;]%VCToolsRedistDir%
         mkdir ..\build
         cd /d %GITHUB_WORKSPACE%
         .\scripts\dothing-lite.bat
       shell: cmd
+           
+    - name: Download msysdo
+      id: msysdo
+      shell: cmake -P {0}
+      run: |
+        set(clang_url "https://sourceforge.net/projects/libportable/files/Tools/mozillabuild/msysdo.7z")
+        file(DOWNLOAD "${clang_url}" $ENV{BUID_DIR}/msysdo.7z SHOW_PROGRESS)
+        execute_process(COMMAND 7z x ./msysdo.7z -aoa WORKING_DIRECTORY $ENV{BUID_DIR})
+        set(pdb_url "https://msdl.microsoft.com/download/symbols/comctl32.pdb/943BA638A2CD4D88A1C7E7418EAF796C1/comctl32.pdb")
+        file(DOWNLOAD "${pdb_url}" $ENV{BUID_DIR}/comctl32.pdb SHOW_PROGRESS)    
 
     - name: start package
       id: package
       run: |
         cd /d "%GITHUB_WORKSPACE%\..\build"
+        copy /y "%BUID_DIR%/*.*" "%GITHUB_WORKSPACE%\..\build\app\"
         7z a -aoa main-%MY_VER%-%MY_BITS%.7z app
       shell: cmd
       
