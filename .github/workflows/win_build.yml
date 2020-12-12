@@ -33,8 +33,10 @@ jobs:
         set /p m_ver=<tmp_1.txt
         del /q tmp_1.txt >nul
         echo MY_VER=%m_ver% >> %GITHUB_ENV%
-        echo %LIBPORTABLE_PATH% >> %GITHUB_PATH%
-        if not defined VCToolsRedistDir echo VCToolsRedistDir not defined.
+        echo "%LIBPORTABLE_PATH%" >> %GITHUB_PATH%
+		if %MY_BITS% == win32 @echo we build win32&call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32"
+		if %MY_BITS% == win64 @echo we build win64&call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64"
+		echo VC_REDISTDIR=%VCToolsRedistDir% >> %GITHUB_ENV% 
         if not defined MY_BITS echo MY_BITS not defined.&EXIT /B 4
         mkdir ..\build
         cd /d %GITHUB_WORKSPACE%
