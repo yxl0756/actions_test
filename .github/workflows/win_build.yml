@@ -34,7 +34,7 @@ jobs:
         del /q tmp_1.txt >nul
         echo MY_VER=%m_ver% >> %GITHUB_ENV%
         rem echo "%LIBPORTABLE_PATH%" >> %GITHUB_PATH%
-        echo "%LIBPORTABLE_PATH%" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        echo %LIBPORTABLE_PATH% >> $env:GITHUB_PATH
         if %MY_BITS% == win32 @echo we build win32&call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32"
         if %MY_BITS% == win64 @echo we build win64&call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64"
         echo VC_REDISTDIR=%VCToolsRedistDir% >> %GITHUB_ENV% 
