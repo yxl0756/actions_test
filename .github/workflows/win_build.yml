@@ -20,9 +20,9 @@ jobs:
       run: |
         mkdir "%BUID_DIR%"
         cd /d %GITHUB_WORKSPACE%
-        if exist mozconfig32 echo "MY_BITS=win32" >> %GITHUB_ENV%
-        if exist mozconfig64 echo "MY_BITS=win64" >> %GITHUB_ENV%
-        echo "LIBPORTABLE_PATH=%BUID_DIR%\mozillabuild\clang" >> %GITHUB_ENV%
+        if exist mozconfig32 echo MY_BITS=win32 >> %GITHUB_ENV%
+        if exist mozconfig64 echo MY_BITS=win64 >> %GITHUB_ENV%
+        echo LIBPORTABLE_PATH=%BUID_DIR%\mozillabuild\clang >> %GITHUB_ENV%
       shell: cmd
 
     - name: Start cmake build
@@ -32,12 +32,13 @@ jobs:
         type config\milestone.txt|findstr "[1-9]">tmp_1.txt
         set /p m_ver=<tmp_1.txt
         del /q tmp_1.txt >nul
-        echo "MY_VER=%m_ver%" >> %GITHUB_ENV%
+        echo MY_VER=%m_ver% >> %GITHUB_ENV%
+        echo %LIBPORTABLE_PATH% >> %GITHUB_PATH%
         if not defined VCToolsRedistDir echo VCToolsRedistDir not defined.
         if not defined MY_BITS echo MY_BITS not defined.&EXIT /B 4
         if "%MY_BITS%" == "win32" call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32"
         if "%MY_BITS%" == "win64" call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64"
-        echo "VC_REDISTDIR=%VCToolsRedistDir%" >> %GITHUB_ENV%
+        echo VC_REDISTDIR=%VCToolsRedistDir% >> %GITHUB_ENV%
         mkdir ..\build
         cd /d %GITHUB_WORKSPACE%
         .\scripts\dothing-lite.bat
