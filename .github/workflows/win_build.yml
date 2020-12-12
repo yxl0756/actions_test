@@ -33,7 +33,8 @@ jobs:
         set /p m_ver=<tmp_1.txt
         del /q tmp_1.txt >nul
         echo MY_VER=%m_ver% >> %GITHUB_ENV%
-        echo "%LIBPORTABLE_PATH%" >> %GITHUB_PATH%
+        rem echo "%LIBPORTABLE_PATH%" >> %GITHUB_PATH%
+        echo "%LIBPORTABLE_PATH%" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
         if %MY_BITS% == win32 @echo we build win32&call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32"
         if %MY_BITS% == win64 @echo we build win64&call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64"
         echo VC_REDISTDIR=%VCToolsRedistDir% >> %GITHUB_ENV% 
@@ -50,8 +51,6 @@ jobs:
         set(clang_url "https://sourceforge.net/projects/libportable/files/Tools/mozillabuild/msysdo.7z")
         file(DOWNLOAD "${clang_url}" $ENV{BUID_DIR}/msysdo.7z SHOW_PROGRESS)
         execute_process(COMMAND 7z x ./msysdo.7z -aoa WORKING_DIRECTORY $ENV{BUID_DIR})
-        set(pdb_url "https://msdl.microsoft.com/download/symbols/comctl32.pdb/943BA638A2CD4D88A1C7E7418EAF796C1/comctl32.pdb")
-        file(DOWNLOAD "${pdb_url}" $ENV{BUID_DIR}/comctl32.pdb SHOW_PROGRESS)    
 
     - name: start package
       id: package
