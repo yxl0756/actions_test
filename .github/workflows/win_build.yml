@@ -20,9 +20,8 @@ jobs:
       run: |
         mkdir "%BUID_DIR%"
         cd /d %GITHUB_WORKSPACE%
-        if exist mozconfig32 set m_bits=win32
-        if exist mozconfig64 set m_bits=win64
-        echo "MY_BITS=%m_bits%" >> %GITHUB_ENV%
+        if exist mozconfig32 echo "MY_BITS=win32" >> %GITHUB_ENV%
+        if exist mozconfig64 echo "MY_BITS=win64" >> %GITHUB_ENV%
         echo "LIBPORTABLE_PATH=%BUID_DIR%\mozillabuild\clang" >> %GITHUB_ENV%
       shell: cmd
 
