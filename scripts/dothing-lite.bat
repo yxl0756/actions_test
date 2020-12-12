@@ -10,7 +10,8 @@ if not defined LIBPORTABLE_PATH @echo Build libportable need this path.&EXIT /B 
 echo %LIBPORTABLE_PATH%
 if not defined VCToolsRedistDir @echo VCToolsRedistDir not defined..&EXIT /B 4
 echo %VCToolsRedistDir%
-
+clang --version
+IF not ERRORLEVEL 0 @echo clang not in PATH.&EXIT /B 4
 @echo 
 @echo GITHUB_WORKSPACE: %GITHUB_WORKSPACE%
 @dir %GITHUB_WORKSPACE% /a
