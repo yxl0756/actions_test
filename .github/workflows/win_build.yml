@@ -36,9 +36,6 @@ jobs:
         echo %LIBPORTABLE_PATH% >> %GITHUB_PATH%
         if not defined VCToolsRedistDir echo VCToolsRedistDir not defined.
         if not defined MY_BITS echo MY_BITS not defined.&EXIT /B 4
-        if "%MY_BITS%" == "win32" call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32"
-        if "%MY_BITS%" == "win64" call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64"
-        echo VC_REDISTDIR=%VCToolsRedistDir% >> %GITHUB_ENV%
         mkdir ..\build
         cd /d %GITHUB_WORKSPACE%
         .\scripts\dothing-lite.bat
