@@ -8,8 +8,8 @@ if not defined MY_BITS @echo mozconfig32 or mozconfig64 not exist.&EXIT /B 4
 echo %MY_BITS%
 if not defined LIBPORTABLE_PATH @echo Build libportable need this path.&EXIT /B 4
 echo %LIBPORTABLE_PATH%
-if not defined VCToolsRedistDir @echo VCToolsRedistDir not defined..&EXIT /B 4
-echo %VCToolsRedistDir%
+if not defined VC_REDISTDIR @echo VC_REDISTDIR not defined..&EXIT /B 4
+echo %VC_REDISTDIR%
 clang --version
 IF not ERRORLEVEL 0 @echo clang not in PATH.&EXIT /B 4
 @echo 
