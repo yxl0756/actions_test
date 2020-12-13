@@ -23,9 +23,14 @@ jobs:
         if exist mozconfig32 echo MY_BITS=win32>>%GITHUB_ENV%
         if exist mozconfig64 echo MY_BITS=win64>>%GITHUB_ENV%
         echo LIBPORTABLE_PATH=%BUID_DIR%\mozillabuild\clang>>%GITHUB_ENV%
-        echo %BUID_DIR%\mozillabuild\clang\bin>>%GITHUB_PATH%
       shell: cmd
 
+    - name: Add env to path
+      id: env_path
+      run: |
+        echo "$env:LIBPORTABLE_PATH\\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      shell: powershell
+            
     - name: Start cmake build
       id: cmake_build
       run: |
