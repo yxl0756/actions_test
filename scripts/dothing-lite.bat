@@ -19,6 +19,10 @@ IF not ERRORLEVEL 0 @echo clang not in PATH.&EXIT /B 4
 @echo PATH: [%PATH%]
 @echo
 @echo .........................
+@cd /d "!BUID_DIR!"
+@git clone --depth=1 https://gitee.com/libportable/mozillabuild.git mozillabuild-src
+@cd /d "!BUID_DIR!\mozillabuild-src"
+@if exist bin.7z 7z x bin.7z -aoa -o!BUID_DIR!
 @cd /d "%GITHUB_WORKSPACE%\..\build"
 @mkdir "%GITHUB_WORKSPACE%\..\build\app"
 @echo all environment:
