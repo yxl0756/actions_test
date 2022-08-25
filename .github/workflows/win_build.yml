@@ -80,7 +80,7 @@ jobs:
     - name: Upload
       uses: actions/upload-artifact@v1
       with:
-        path: ${{ github.workspace }}/../build/main-${{ env.MY_VER }}-${{ env.MY_BITS }}.7z
+        path: ${{ github.workspace }}/main-${{ env.MY_VER }}-${{ env.MY_BITS }}.7z
         name: main-${{ env.MY_VER }}-${{ env.MY_BITS }}.7z
  
     - name: Get current time
