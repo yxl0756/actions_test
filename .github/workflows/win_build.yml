@@ -56,6 +56,7 @@ jobs:
         cmake ../actions_test -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
         nmake
         cd /d %GITHUB_WORKSPACE%
+        ..\build\main.exe
         .\scripts\dothing-lite.bat
       shell: cmd
            
@@ -118,6 +119,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN_YXL0756 }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/../build/main-${{ env.MY_VER }}-${{ env.MY_BITS }}.7z
+        asset_path: ${{ github.workspace }}/main-${{ env.MY_VER }}-${{ env.MY_BITS }}.7z
         asset_name: main-${{ env.MY_VER }}-${{ env.MY_BITS }}.7z
         asset_content_type: application/x-gtar
