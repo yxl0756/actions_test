@@ -50,7 +50,9 @@ jobs:
         echo MY_VER=%m_ver%>>%GITHUB_ENV%
         rem echo "%LIBPORTABLE_PATH%">>%GITHUB_PATH%
         if not defined MY_BITS echo MY_BITS not defined.&EXIT /B 4
-        mkdir ..\build
+        mkdir ..\build&&cd ..\build
+        cmake ../actions_test -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
+        nmake
         cd /d %GITHUB_WORKSPACE%
         .\scripts\dothing-lite.bat
       shell: cmd
