@@ -23,10 +23,10 @@ IF not ERRORLEVEL 0 @echo clang not in PATH.&EXIT /B 4
 @git config --global http.postBuffer 524288000
 @git config --global http.lowSpeedLimit 0
 @git config --global http.lowSpeedTime 999999
-@git clone https://gitee.com/libportable/mozillabuild.git mozillabuild-src
-@cd /d "!BUID_DIR!\mozillabuild-src"
-@if exist bin.7z 7z x bin.7z -aoa -o!BUID_DIR!
-@if not exist "!BUID_DIR!\mozillabuild\bin" @echo mozbin not exist&EXIT /B 4
+::@git clone https://gitee.com/libportable/mozillabuild.git mozillabuild-src
+::@cd /d "!BUID_DIR!\mozillabuild-src"
+::@if exist bin.7z 7z x bin.7z -aoa -o!BUID_DIR!
+::@if not exist "!BUID_DIR!\mozillabuild\bin" @echo mozbin not exist&EXIT /B 4
 @cd /d "%GITHUB_WORKSPACE%\..\build"
 @mkdir "%GITHUB_WORKSPACE%\..\build\app"
 @echo all environment:
