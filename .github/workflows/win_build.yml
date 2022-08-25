@@ -74,7 +74,7 @@ jobs:
       id: package
       run: |
         cd /d "%GITHUB_WORKSPACE%"
-        7z a -aoa "main-%MY_VER%-%MY_BITS%.7z" build
+        7z a -aoa "main-%MY_VER%-%MY_BITS%.7z" "..\build"
       shell: cmd
       
     - name: Upload
