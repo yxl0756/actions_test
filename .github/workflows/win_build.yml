@@ -73,9 +73,8 @@ jobs:
     - name: start package
       id: package
       run: |
-        cd /d "%GITHUB_WORKSPACE%\..\build"
-        copy /y "%BUID_DIR%/*.*" "%GITHUB_WORKSPACE%\..\build\app\"
-        7z a -aoa "main-%MY_VER%-%MY_BITS%.7z" app
+        cd /d "%GITHUB_WORKSPACE%"
+        7z a -aoa "main-%MY_VER%-%MY_BITS%.7z" build
       shell: cmd
       
     - name: Upload
