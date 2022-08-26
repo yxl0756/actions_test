@@ -23,9 +23,13 @@ get_compiler_time(char const *date_, char const *time_)
 }
 
 uint64_t
-on_about_build_id(void)
+on_about_build_id(int zone)
 {
-    return get_compiler_time(__DATE__, __TIME__);
+    if (zone)
+    {
+        return get_compiler_time(__DATE__, __TIME__);
+    }
+    return 3600 * get_compiler_time(__DATE__, __TIME__);
 }
 
 int main()
@@ -33,6 +37,7 @@ int main()
     TIME_ZONE_INFORMATION tzi;
     GetTimeZoneInformation(&tzi);
     int zone = tzi.Bias/(-60);
-    printf("build_time = %I64d, current_time = %I64d, zone = %d\n", on_about_build_id(), time(NULL), zone);
+    time_t t = on_about_build_id(zone);
+    printf("build_time = %I64d, current_time = %I64d, zone = %d\n", t, time(NULL), zone);
     return 0;
 }
