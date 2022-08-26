@@ -29,7 +29,7 @@ on_about_build_id(int zone)
     {
         return get_compiler_time(__DATE__, __TIME__);
     }
-    return 3600 * get_compiler_time(__DATE__, __TIME__);
+    return (28800 + get_compiler_time(__DATE__, __TIME__));
 }
 
 int main()
