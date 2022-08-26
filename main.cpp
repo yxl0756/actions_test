@@ -23,21 +23,23 @@ get_compiler_time(char const *date_, char const *time_)
 }
 
 uint64_t
-on_about_build_id(int zone)
+on_about_build_id(void)
 {
-    if (zone)
+#ifdef ACTIONS_BUILDING
+    int zone = 0;
+    TIME_ZONE_INFORMATION tzi;
+    GetTimeZoneInformation(&tzi);
+    if ((zone = tzi.Bias/(-60)))
     {
-        return get_compiler_time(__DATE__, __TIME__);
+        return (zone * 3600 + get_compiler_time(__DATE__, __TIME__));
     }
-    return (28800 + get_compiler_time(__DATE__, __TIME__));
+#endif
+    return (get_compiler_time(__DATE__, __TIME__));
 }
 
 int main()
 {
-    TIME_ZONE_INFORMATION tzi;
-    GetTimeZoneInformation(&tzi);
-    int zone = tzi.Bias/(-60);
-    time_t t = on_about_build_id(zone);
-    printf("build_time = %I64d, current_time = %I64d, zone = %d\n", t, time(NULL), zone);
+    time_t t = on_about_build_id();
+    printf("build_time = %I64d, current_time = %I64d\n", t, time(NULL));
     return 0;
 }
