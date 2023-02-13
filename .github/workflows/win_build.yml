@@ -13,51 +13,78 @@ jobs:
     name: Iceweasel build
     runs-on: windows-2019
     steps:        
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - name: Create directory
-      id: mkdir
+    - name: mkdir and setenv
+      id: mkdir_setenv
       run: |
         mkdir "%BUID_DIR%"
-        cd /d %GITHUB_WORKSPACE%
-        if exist mozconfig32 echo MY_BITS=win32>>%GITHUB_ENV%
-        if exist mozconfig64 echo MY_BITS=win64>>%GITHUB_ENV%
         echo LIBPORTABLE_PATH=%BUID_DIR%\mozillabuild\clang>>%GITHUB_ENV%
-      shell: cmd
-
-    - name: get msvc path
-      id: msvc_path
-      run: |
-        if "%MY_BITS%" == "win32" @echo we build win32&call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32"
-        if "%MY_BITS%" == "win64" @echo we build win64&call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64"
-        @set
         echo VC_REDISTDIR=%VCToolsRedistDir%>>%GITHUB_ENV%
-      shell: cmd
-      
-    - name: Add env to path
-      id: env_path
-      run: |
-        echo "$env:LIBPORTABLE_PATH\bin" >> $env:GITHUB_PATH
-      shell: pwsh
-            
-    - name: Start cmake build
-      id: cmake_build
-      run: |
         cd /d %GITHUB_WORKSPACE%
         type config\milestone.txt|findstr "[1-9]">tmp_1.txt
         set /p m_ver=<tmp_1.txt
         del /q tmp_1.txt >nul
         echo MY_VER=%m_ver%>>%GITHUB_ENV%
-        rem echo "%LIBPORTABLE_PATH%">>%GITHUB_PATH%
-        if not defined MY_BITS echo MY_BITS not defined.&EXIT /B 4
-        if "%MY_BITS%" == "win32" @echo we build win32&call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32"
-        if "%MY_BITS%" == "win64" @echo we build win64&call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64"        
+      shell: cmd
+      
+    - name: Add path
+      id: env_path
+      run: |
+        echo "%LIBPORTABLE_PATH%\bin">>%GITHUB_PATH%
+      shell: cmd
+
+    - name: msvc64 environment
+      id: msvc64
+      run: |
+        @echo we build win64&call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64"
+        echo MY_BITS64=win64>>%GITHUB_ENV%
+      shell: cmd
+      
+    - name: Show all env64
+      id: env_show64
+      run: |
+        @set
+      shell: cmd
+      
+    - name: Start cmake build64
+      id: cmake_build64
+      run: |
+        cd /d %GITHUB_WORKSPACE%
+        if not defined MY_BITS64 echo MY_BITS64 not defined.&EXIT /B 4     
         mkdir ..\build&&cd ..\build
         cmake ../actions_test -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
         nmake
         cd /d %GITHUB_WORKSPACE%
         ..\build\main.exe
-        .\scripts\dothing-lite.bat
+        7z a -aoa "main-%MY_VER%-%MY_BITS64%.7z" "..\build"
+      shell: cmd
+      
+    - name: msvc32 environment
+      id: msvc32
+      run: |
+        @echo we build win32&call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32"
+        echo MY_BITS32=win32>>%GITHUB_ENV%
+      shell: cmd
+      
+    - name: Show all env32
+      id: env_show32
+      run: |
+        @set
+      shell: cmd
+            
+    - name: Start cmake build32
+      id: cmake_build32
+      run: |
+        cd /d %GITHUB_WORKSPACE%
+        if not defined MY_BITS32 echo MY_BITS32 not defined.&EXIT /B 4
+        rd /s /q "..\build"
+        mkdir "..\build"&&cd "..\build"
+        cmake ../actions_test -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release
+        nmake
+        cd /d %GITHUB_WORKSPACE%
+        ..\build\main.exe
+        7z a -aoa "main-%MY_VER%-%MY_BITS32%.7z" "..\build"
       shell: cmd
            
     - name: Download msysdo
@@ -71,18 +98,15 @@ jobs:
         file(DOWNLOAD "${threeparty_url}" $ENV{GITHUB_WORKSPACE}/src/3rdparty/three_party_dll.7z SHOW_PROGRESS)
         execute_process(COMMAND 7z x ./three_party_dll.7z -aoa WORKING_DIRECTORY $ENV{GITHUB_WORKSPACE}/src/3rdparty)
 
-    - name: start package
-      id: package
-      run: |
-        cd /d "%GITHUB_WORKSPACE%"
-        7z a -aoa "main-%MY_VER%-%MY_BITS%.7z" "..\build"
-      shell: cmd
-      
-    - name: Upload
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v3
       with:
-        path: ${{ github.workspace }}/main-${{ env.MY_VER }}-${{ env.MY_BITS }}.7z
-        name: main-${{ env.MY_VER }}-${{ env.MY_BITS }}.7z
+        path: ${{ github.workspace }}/main-${{ env.MY_VER }}-${{ env.MY_BITS64 }}.7z
+        name: main-${{ env.MY_VER }}-${{ env.MY_BITS64 }}
+
+      uses: actions/upload-artifact@v3
+      with:
+        path: ${{ github.workspace }}/main-${{ env.MY_VER }}-${{ env.MY_BITS32 }}.7z
+        name: main-${{ env.MY_VER }}-${{ env.MY_BITS32 }}
  
     - name: Get current time
       uses: yxl0756/get-time-action@v1.0
@@ -102,23 +126,3 @@ jobs:
         commitish: master
         draft: false
         prerelease: false
-        
-    - name: Store Release url    
-      run: |
-        echo "${{ steps.create_release.outputs.upload_url }}" > ./upload_url
-        
-    - uses: actions/upload-artifact@v1
-      with:
-        path: ./upload_url
-        name: upload_url
-                
-    - name: Upload Release Asset
-      id: upload-release-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN_YXL0756 }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/main-${{ env.MY_VER }}-${{ env.MY_BITS }}.7z
-        asset_name: main-${{ env.MY_VER }}-${{ env.MY_BITS }}.7z
-        asset_content_type: application/x-gtar
