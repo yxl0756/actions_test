@@ -126,3 +126,31 @@ jobs:
         commitish: master
         draft: false
         prerelease: false
+
+    - name: Store Release url    
+      run: |
+        echo "${{ steps.create_release.outputs.upload_url }}" > ./upload_url
+
+    - uses: actions/upload-artifact@v3
+      with:
+        path: ./upload_url
+        name: upload_url
+
+    - uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN_YXL0756 }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ github.workspace }}/main-${{ env.MY_VER }}-${{ env.MY_BITS32 }}.7z
+        asset_name: main-${{ env.MY_VER }}-${{ env.MY_BITS32 }}.7z
+        asset_content_type: application/x-gtar
+        
+    - uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN_YXL0756 }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ github.workspace }}/main-${{ env.MY_VER }}-${{ env.MY_BITS64 }}.7z
+        asset_name: main-${{ env.MY_VER }}-${{ env.MY_BITS64 }}.7z
+        asset_content_type: application/x-gtar
+                
