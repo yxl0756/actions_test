@@ -105,36 +105,10 @@ jobs:
         format: YYYYMMDDHHmmss
         utcOffset: "+08:00"
 
-    - name: Create Release
-      id: create_release
-      uses: yxl0756/create-release@1a72e235c178bf2ae6c51a8ae36febc24568c5fe
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN_YXL0756 }}
-      with:
-        tag_name: ${{ steps.current-time.outputs.formattedTime }}
-        release_name: Release ${{ steps.current-time.outputs.formattedTime }}
-        commitish: master
-        draft: false
-        prerelease: false
-
-    - name: Store Release url    
-      run: |
-        echo "${{ steps.create_release.outputs.upload_url }}" > ./upload_url
-
-    - uses: actions/upload-artifact@v3
-      with:
-        path: ./upload_url
-        name: upload_url
-
     - uses: yxl0756/release-action@v1.12.0
       with:
-        artifacts: ${{ github.workspace }}/main-${{ env.MY_VER }}-${{ env.MY_BITS32 }}.7z
+        tag: ${{ steps.current-time.outputs.formattedTime }}
+        name: Release ${{ env.MY_VER }}
+        artifacts: ${{ github.workspace }}/main-${{ env.MY_VER }}-${{ env.MY_BITS64 }}.7z,${{ github.workspace }}/main-${{ env.MY_VER }}-${{ env.MY_BITS32 }}.7z
         prerelease: false
-        token: ${{ secrets.YOUR_GITHUB_TOKEN }}
-        
-    - uses: yxl0756/release-action@v1.12.0
-      with:
-        artifacts: ${{ github.workspace }}/main-${{ env.MY_VER }}-${{ env.MY_BITS64 }}.7z
-        prerelease: false
-        token: ${{ secrets.YOUR_GITHUB_TOKEN }}
-                
+        token: ${{ secrets.RELEASES_TOKEN_YXL0756 }}
