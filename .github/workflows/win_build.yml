@@ -97,13 +97,13 @@ jobs:
         set(threeparty_url "https://sourceforge.net/projects/libportable/files/Tools/skylark%20edit/three_party_dll.7z/download")
         file(DOWNLOAD "${threeparty_url}" $ENV{GITHUB_WORKSPACE}/src/3rdparty/three_party_dll.7z SHOW_PROGRESS)
         execute_process(COMMAND 7z x ./three_party_dll.7z -aoa WORKING_DIRECTORY $ENV{GITHUB_WORKSPACE}/src/3rdparty)
-
-      uses: actions/upload-artifact@v3
+      
+    - uses: actions/upload-artifact@v3
       with:
         path: ${{ github.workspace }}/main-${{ env.MY_VER }}-${{ env.MY_BITS64 }}.7z
         name: main-${{ env.MY_VER }}-${{ env.MY_BITS64 }}
 
-      uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v3
       with:
         path: ${{ github.workspace }}/main-${{ env.MY_VER }}-${{ env.MY_BITS32 }}.7z
         name: main-${{ env.MY_VER }}-${{ env.MY_BITS32 }}
