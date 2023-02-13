@@ -20,12 +20,13 @@ jobs:
       run: |
         mkdir "%BUID_DIR%"
         echo LIBPORTABLE_PATH=%BUID_DIR%\mozillabuild\clang>>%GITHUB_ENV%
-        echo VC_REDISTDIR=%VCToolsRedistDir%>>%GITHUB_ENV%
         cd /d %GITHUB_WORKSPACE%
         type config\milestone.txt|findstr "[1-9]">tmp_1.txt
         set /p m_ver=<tmp_1.txt
         del /q tmp_1.txt >nul
         echo MY_VER=%m_ver%>>%GITHUB_ENV%
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64"
+        echo VC_REDISTDIR=%VCToolsRedistDir%>>%GITHUB_ENV%
       shell: cmd
       
     - name: Add path
@@ -111,7 +112,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.RELEASES_TOKEN_YXL0756 }}
       with:
         tag_name: ${{ steps.current-time.outputs.time }}
-        release_name: Release ${{ steps.current-time.outputs.time }}
+        release_name: Release ${{ steps.current-time.outputs.formattedTime }}
         commitish: master
         draft: false
         prerelease: false
