@@ -36,13 +36,16 @@ get_compiler_time(char const *date_, char const *time_)
     printf("zone = %d\n", zone);
     //return mktime(&t);
     return (zone * 3600 + _mkgmtime(&t));
+    //return (_mkgmtime(&t));
 }
 
 int main(void)
 {
     char chunk[64] = {0};
     time_t t = get_compiler_time(__DATE__, __TIME__);
+    printf("t = %zu\n", t);
     struct tm *p = gmtime(&t);
+    printf("after gmtime, the time is: %d:%d:%d\n", p->tm_hour, p->tm_min, p->tm_sec);
     _snprintf(chunk, 64, "%d%02d%02d%02d%02d%02d", (1900+p->tm_year), (1+p->tm_mon),p->tm_mday, p->tm_hour, p->tm_min, p->tm_sec);
     int64_t t64 = _atoi64(chunk);
     printf("chunk = [%s], t64 = [%I64d]\n", chunk, t64);
