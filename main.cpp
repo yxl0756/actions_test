@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <windows.h>
 
-static time_t GetUtcTime(int nDate, int nTime)
+static time_t get_utc_time(int nDate, int nTime)
 {
     struct tm tmOuter = { nTime%100, (nTime/100)%100, nTime/10000, nDate%100,(nDate/100)%100-1, nDate/10000-1900 };
 #ifdef _WIN32  // Windows
@@ -21,8 +21,6 @@ get_compiler_time(char const *date_, char const *time_)
     struct tm t;
     char s_month[5];
     int year;
-    int zone = 0;
-    TIME_ZONE_INFORMATION tzi;
     const char month_names[] = "JanFebMarAprMayJunJulAugSepOctNovDec";
     sscanf(date_, "%s %d %d", s_month, &t.tm_mday, &year);
     sscanf(time_, "%2d %*c %2d %*c %2d", &t.tm_hour, &t.tm_min, &t.tm_sec);
@@ -31,19 +29,29 @@ get_compiler_time(char const *date_, char const *time_)
     t.tm_mon = (int)((strstr(month_names, s_month) - month_names) / 3);
     t.tm_year = year - 1900;
     t.tm_isdst = -1;
-    GetTimeZoneInformation(&tzi);
-    zone = (int)tzi.Bias/60;
-    printf("zone = %d\n", zone);
-    //return mktime(&t);
-    //return (zone * 3600 + _mkgmtime(&t));
     return (_mkgmtime(&t));
+}
+
+uint64_t
+on_about_build_id(void)
+{
+#ifndef ACTIONS_BUILDING
+    int zone = 0;
+    TIME_ZONE_INFORMATION tzi;
+    GetTimeZoneInformation(&tzi);
+    if ((zone = (int)tzi.Bias/60))
+    {
+        printf("If it is a local compilation, add this time offset, zone = %d\n", zone);
+        return (zone * 3600 + get_compiler_time(__DATE__, __TIME__));
+    }
+#endif
+    return get_compiler_time(__DATE__, __TIME__);
 }
 
 int main(void)
 {
     char chunk[64] = {0};
-    printf("data[%s %s]\n", __DATE__, __TIME__);
-    time_t t = get_compiler_time(__DATE__, __TIME__);
+    time_t t = on_about_build_id();
     printf("t = %zu\n", t);
     struct tm *p = gmtime(&t);
     printf("after gmtime, the time is: %d:%d:%d\n", p->tm_hour, p->tm_min, p->tm_sec);
