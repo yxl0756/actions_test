@@ -42,6 +42,7 @@ get_compiler_time(char const *date_, char const *time_)
 int main(void)
 {
     char chunk[64] = {0};
+    printf("data[%s %s]\n, __DATE__, __TIME__);
     time_t t = get_compiler_time(__DATE__, __TIME__);
     printf("t = %zu\n", t);
     struct tm *p = gmtime(&t);
