@@ -35,8 +35,8 @@ get_compiler_time(char const *date_, char const *time_)
     zone = (int)tzi.Bias/60;
     printf("zone = %d\n", zone);
     //return mktime(&t);
-    return (zone * 3600 + _mkgmtime(&t));
-    //return (_mkgmtime(&t));
+    //return (zone * 3600 + _mkgmtime(&t));
+    return (_mkgmtime(&t));
 }
 
 int main(void)
