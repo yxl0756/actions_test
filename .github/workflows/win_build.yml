@@ -11,8 +11,8 @@ env:
 jobs:
   fx_build:
     name: Iceweasel build
-    runs-on: windows-2019
-    steps:        
+    runs-on: windows-2022
+    steps:
     - uses: actions/checkout@v3
 
     - name: mkdir and setenv
