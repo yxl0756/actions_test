@@ -35,5 +35,8 @@ jobs:
         env
         pwd
         gcc -v
+        python --version
+        which 7z
+        which node
         which gcc
       shell: bash
