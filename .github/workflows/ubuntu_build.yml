@@ -19,8 +19,8 @@ jobs:
     - name: mkdir and setenv
       id: mkdir_setenv
       run: |
-        mkdir -p "$MOZ_FETCHES_DIR"
-        mkdir -p "$MOZBUILD_DOWNLOAD"
+        sudo mkdir -p "$MOZ_FETCHES_DIR"
+        sudo mkdir -p "$MOZBUILD_DOWNLOAD"
         echo LIBPORTABLE_PATH=$MOZ_FETCHES_DIR/clang>>$GITHUB_ENV
         echo VC_REDISTDIR=$MOZ_FETCHES_DIR/vs/VC>>$GITHUB_ENV
         cd $GITHUB_WORKSPACE
@@ -50,13 +50,13 @@ jobs:
       id: build_tools
       run: |
         cd "$MOZBUILD_DOWNLOAD"
-        wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/cbindgen.tar.xz?viasf=1 -O cbindgen.tar.xz
+        sudo wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/cbindgen.tar.xz?viasf=1 -O cbindgen.tar.xz
         if [ $? -ne 0 ]; then
           echo Download cbindgen failed
           exit 255
         fi
         ls -la
-        tar Jxf cbindgen.tar.xz -C "$MOZ_FETCHES_DIR"
+        sudo tar Jxf cbindgen.tar.xz -C "$MOZ_FETCHES_DIR"
         ls "$MOZ_FETCHES_DIR" -la
         # WINEPREFIX=$MOZ_MOZ_FETCHES_DIR/.wine wine/bin/wine64 --version
       shell: bash
