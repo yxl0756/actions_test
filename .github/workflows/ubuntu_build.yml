@@ -5,7 +5,7 @@ on:
       - master
 env:
   MOZ_FETCHES_DIR: /home/runner/fetches
-  MOZBUILD_STATE_PATH: /home/runner/.mozbuild
+  MOZBUILD_STATE_PATH: /home/runner/fetches/.mozbuild
 
 jobs:
   fx_build:
@@ -41,13 +41,14 @@ jobs:
         which wget
         which gcc
         df -HT /home
+        node --version
       shell: bash
 
     - name: Download Tools
       id: build_tools
       run: |
         cd $MOZ_FETCHES_DIR
-        wget https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/U1Vn8JFpQIyJia7ngQxtRg/artifacts/public/build/wine.tar.zst
-        tar xvf wine.tar.zst
-        WINEPREFIX=$MOZ_MOZ_FETCHES_DIR/.wine wine/bin/wine64 --version
+        # wget https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/U1Vn8JFpQIyJia7ngQxtRg/artifacts/public/build/wine.tar.zst
+        # tar xvf wine.tar.zst
+        # WINEPREFIX=$MOZ_MOZ_FETCHES_DIR/.wine wine/bin/wine64 --version
       shell: bash
