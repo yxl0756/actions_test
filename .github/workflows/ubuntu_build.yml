@@ -40,6 +40,7 @@ jobs:
         which node
         which wget
         which gcc
+        df -HT /home
       shell: bash
 
     - name: Download Tools
@@ -48,5 +49,5 @@ jobs:
         cd $MOZ_FETCHES_DIR
         wget https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/U1Vn8JFpQIyJia7ngQxtRg/artifacts/public/build/wine.tar.zst
         tar xvf wine.tar.zst
-        WINEPREFIX=$MOZ_MOZ_FETCHES_DIR/.wine wine/wine64 --version
+        WINEPREFIX=$MOZ_MOZ_FETCHES_DIR/.wine wine/bin/wine64 --version
       shell: bash
