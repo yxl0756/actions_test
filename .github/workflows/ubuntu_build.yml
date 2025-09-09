@@ -34,7 +34,6 @@ jobs:
         echo HOME [$HOME]
         env
         pwd
-        which nodejs
-        which 7z
-        which wget
+        gcc -v
+        which gcc
       shell: bash
