@@ -4,8 +4,10 @@ on:
     branches: 
       - master
 env:
-  MOZ_FETCHES_DIR: /home/runner/fetches
-  MOZBUILD_STATE_PATH: /home/runner/fetches/.mozbuild
+  MOZ_FETCHES_DIR: /builds/worker/fetches
+  MOZBUILD_DOWNLOAD: /builds/worker/fetches/download
+  MOZBUILD_STATE_PATH: /builds/worker/fetches/.mozbuild
+
 
 jobs:
   fx_build:
@@ -17,8 +19,8 @@ jobs:
     - name: mkdir and setenv
       id: mkdir_setenv
       run: |
-        mkdir "$MOZ_FETCHES_DIR"
-        mkdir -p "$MOZBUILD_STATE_PATH"
+        mkdir -p "$MOZ_FETCHES_DIR"
+        mkdir -p "$MOZBUILD_DOWNLOAD"
         echo LIBPORTABLE_PATH=$MOZ_FETCHES_DIR/clang>>$GITHUB_ENV
         echo VC_REDISTDIR=$MOZ_FETCHES_DIR/vs/VC>>$GITHUB_ENV
         cd $GITHUB_WORKSPACE
@@ -47,8 +49,14 @@ jobs:
     - name: Download Tools
       id: build_tools
       run: |
-        cd $MOZ_FETCHES_DIR
-        # wget https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/U1Vn8JFpQIyJia7ngQxtRg/artifacts/public/build/wine.tar.zst
-        # tar xvf wine.tar.zst
+        cd "$MOZBUILD_DOWNLOAD"
+        wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/cbindgen.tar.xz?viasf=1 -O cbindgen.tar.xz
+        if [ $? -ne 0 ]; then
+          echo Download cbindgen failed
+          exit 255
+        fi
+        ls -la
+        tar Jxf cbindgen.tar.xz -C "$MOZ_FETCHES_DIR"
+        ls "$MOZ_FETCHES_DIR" -la
         # WINEPREFIX=$MOZ_MOZ_FETCHES_DIR/.wine wine/bin/wine64 --version
       shell: bash
