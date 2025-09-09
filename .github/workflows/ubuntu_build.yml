@@ -1,0 +1,39 @@
+name: Ubuntu environment
+on: 
+  push:
+    branches: 
+      - master
+env:
+  FETCHES_DIR: ~/fetches
+  SOURCE_DIR: ~/works
+
+jobs:
+  fx_build:
+    name: Iceweasel build
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: mkdir and setenv
+      id: mkdir_setenv
+      run: |
+        mkdir "$FETCHES_DIR"
+        mkdir "$SOURCE_DIR"
+        echo LIBPORTABLE_PATH=$FETCHES_DIR/clang>>$GITHUB_ENV
+        echo VC_REDISTDIR=$FETCHES_DIR/vs/VC>>$GITHUB_ENV
+        cd $GITHUB_WORKSPACE
+        pwd
+      shell: bash
+      
+    - name: Show env
+      id: env_path
+      run: |
+        echo LIBPORTABLE_PATH [$LIBPORTABLE_PATH]
+        echo VC_REDISTDIR [$VC_REDISTDIR]
+        echo HOME [$HOME]
+        env
+        pwd
+        which nodejs
+        which 7z
+        which wget
+      shell: bash
