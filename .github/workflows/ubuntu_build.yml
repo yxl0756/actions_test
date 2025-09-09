@@ -4,8 +4,8 @@ on:
     branches: 
       - master
 env:
-  FETCHES_DIR: /home/runner/fetches
-  OBJ_DIR: /home/runner/obju-release
+  MOZ_FETCHES_DIR: /home/runner/fetches
+  MOZBUILD_STATE_PATH: /home/runner/.mozbuild
 
 jobs:
   fx_build:
@@ -17,10 +17,10 @@ jobs:
     - name: mkdir and setenv
       id: mkdir_setenv
       run: |
-        mkdir "$FETCHES_DIR"
-        mkdir -p "$OBJ_DIR"
-        echo LIBPORTABLE_PATH=$FETCHES_DIR/clang>>$GITHUB_ENV
-        echo VC_REDISTDIR=$FETCHES_DIR/vs/VC>>$GITHUB_ENV
+        mkdir "$MOZ_FETCHES_DIR"
+        mkdir -p "$MOZBUILD_STATE_PATH"
+        echo LIBPORTABLE_PATH=$MOZ_FETCHES_DIR/clang>>$GITHUB_ENV
+        echo VC_REDISTDIR=$MOZ_FETCHES_DIR/vs/VC>>$GITHUB_ENV
         cd $GITHUB_WORKSPACE
         pwd
         ls -la
@@ -38,5 +38,15 @@ jobs:
         python --version
         which 7z
         which node
+        which wget
         which gcc
+      shell: bash
+
+    - name: Download Tools
+      id: build_tools
+      run: |
+        cd $MOZ_FETCHES_DIR
+        wget https://firefox-ci-tc.services.mozilla.com/api/queue/v1/task/U1Vn8JFpQIyJia7ngQxtRg/artifacts/public/build/wine.tar.zst
+        tar xvf wine.tar.zst
+        WINEPREFIX=$MOZ_MOZ_FETCHES_DIR/.wine wine/wine64 --version
       shell: bash
