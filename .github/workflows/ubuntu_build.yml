@@ -4,8 +4,8 @@ on:
     branches: 
       - master
 env:
-  FETCHES_DIR: ~/fetches
-  SOURCE_DIR: ~/works
+  FETCHES_DIR: /home/runner/fetches
+  OBJ_DIR: /home/runner/obju-release
 
 jobs:
   fx_build:
@@ -18,11 +18,12 @@ jobs:
       id: mkdir_setenv
       run: |
         mkdir "$FETCHES_DIR"
-        mkdir "$SOURCE_DIR"
+        mkdir -p "$OBJ_DIR"
         echo LIBPORTABLE_PATH=$FETCHES_DIR/clang>>$GITHUB_ENV
         echo VC_REDISTDIR=$FETCHES_DIR/vs/VC>>$GITHUB_ENV
         cd $GITHUB_WORKSPACE
         pwd
+        ls -la
       shell: bash
       
     - name: Show env
