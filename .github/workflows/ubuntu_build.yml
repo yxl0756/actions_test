@@ -49,6 +49,9 @@ jobs:
         echo MY_BITS [$MY_BITS]
         echo MY_VER [$MY_VER]
         echo ======================
+        echo runner group:
+        id runner
+        echo ======================
         echo CPU core numbers:
         nproc
         echo ======================
@@ -57,14 +60,17 @@ jobs:
         echo ======================
         env
         echo ======================
+        gcc -v
+        echo ======================
         echo disk space:
         df -HT /home
         echo ======================
-        gcc -v
-        python --version
-        which 7z
-        which node
+        echo node version:
         node --version
+        echo ======================
+        python --version
+        echo ======================
+        which 7z
         which wget
         which gcc
       shell: bash
@@ -159,4 +165,12 @@ jobs:
         rm -rf "$MOZBUILD_DOWNLOAD"
         # WINEPREFIX=$MOZ_MOZ_FETCHES_DIR/.wine wine/bin/wine64 --version
         df -h
+      shell: bash
+
+    - name: start building
+      id: env_building
+      run: |
+        cd "$GITHUB_WORKSPACE"
+        chmod +x ./fx.sh
+        ./fx.sh
       shell: bash
