@@ -16,6 +16,17 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: disk df
+      id: disk_df
+      run: |
+        df -h
+      shell: bash
+
+    - uses: mathio/gha-cleanup@v1
+      with:
+        remove-browsers: true
+        verbose: true
+
     - name: mkdir and setenv
       id: mkdir_setenv
       run: |
@@ -27,6 +38,7 @@ jobs:
         cd $GITHUB_WORKSPACE
         pwd
         ls -la
+        df -h
       shell: bash
       
     - name: Show env
