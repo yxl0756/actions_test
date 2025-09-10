@@ -4,6 +4,7 @@ on:
     branches: 
       - master
 env:
+  APP_NAME: Iceweasel
   MOZ_FETCHES_DIR: /builds/worker/fetches
   MOZBUILD_DOWNLOAD: /builds/worker/fetches/download
   MOZBUILD_STATE_PATH: /builds/worker/fetches/.mozbuild
@@ -16,10 +17,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: yxl0756/gha-cleanup@v1
-      with:
-        remove-browsers: true
-        verbose: true
+    # - uses: yxl0756/gha-cleanup@v1
+    #   with:
+    #     remove-browsers: true
+    #     verbose: true
 
     - name: mkdir and setenv
       id: mkdir_setenv
@@ -32,6 +33,10 @@ jobs:
         cd $GITHUB_WORKSPACE
         pwd
         ls -la
+        if [ -f "mozconfig32" ]; then echo MY_BITS=win32>>$GITHUB_ENV&echo MY_OBJ=obju32-release>>$GITHUB_ENV; fi
+        if [ -f "mozconfig64" ]; then echo MY_BITS=win64>>$GITHUB_ENV&echo MY_OBJ=obju64-release>>$GITHUB_ENV; fi
+        m_ver=`cat browser\config\version.txt`
+        echo MY_VER=$m_ver>>$GITHUB_ENV
       shell: bash
       
     - name: Show env
@@ -40,8 +45,21 @@ jobs:
         echo LIBPORTABLE_PATH [$LIBPORTABLE_PATH]
         echo VC_REDISTDIR [$VC_REDISTDIR]
         echo HOME [$HOME]
-        env
+        echo MY_OBJ [$MY_OBJ]
+        echo MY_BITS [$MY_BITS]
+        echo MY_VER [$MY_VER]
+        echo ======================
+        echo CPU core numbers:
+        nproc
+        echo ======================
+        echo Current dir:
         pwd
+        echo ======================
+        env
+        echo ======================
+        echo disk space:
+        df -HT /home
+        echo ======================
         gcc -v
         python --version
         which 7z
@@ -49,7 +67,6 @@ jobs:
         node --version
         which wget
         which gcc
-        df -HT /home
       shell: bash
 
     - name: Download Tools
@@ -62,72 +79,72 @@ jobs:
           exit 255
         fi
         tar Jxf cbindgen.tar.xz -C "$MOZ_FETCHES_DIR"
-        wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/clang.tar.xz?viasf=1 -O clang.tar.xz
-        if [ $? -ne 0 ]; then
-          echo Download clang failed
-          exit 255
-        fi
-        tar Jxf clang.tar.xz -C "$MOZ_FETCHES_DIR"
-        wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/diasdk.tar.xz?viasf=1 -O diasdk.tar.xz
-        if [ $? -ne 0 ]; then
-          echo Download diasdk failed
-          exit 255
-        fi
-        tar Jxf diasdk.tar.xz -C "$MOZ_FETCHES_DIR"
-        wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/dxc.tar.xz?viasf=1 -O dxc.tar.xz
-        if [ $? -ne 0 ]; then
-          echo Download dxc failed
-          exit 255
-        fi
-        tar Jxf dxc.tar.xz -C "$MOZ_FETCHES_DIR"
-        wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/libportable.tar.xz?viasf=1 -O libportable.tar.xz
-        if [ $? -ne 0 ]; then
-          echo Download libportable failed
-          exit 255
-        fi
-        tar Jxf libportable.tar.xz -C "$MOZ_FETCHES_DIR/clang"
-        wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/mozbuild.tar.xz?viasf=1 -O mozbuild.tar.xz
-        if [ $? -ne 0 ]; then
-          echo Download mozbuild failed
-          exit 255
-        fi
-        tar Jxf mozbuild.tar.xz -C "$MOZ_FETCHES_DIR"
-        wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/onnxruntime.tar.xz?viasf=1 -O onnxruntime.tar.xz
-        if [ $? -ne 0 ]; then
-          echo Download onnxruntime failed
-          exit 255
-        fi
-        tar Jxf onnxruntime.tar.xz -C "$MOZ_FETCHES_DIR"
-        wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/rust.tar.xz?viasf=1 -O rust.tar.xz
-        if [ $? -ne 0 ]; then
-          echo Download rust failed
-          exit 255
-        fi
-        tar Jxf rust.tar.xz -C "$MOZ_FETCHES_DIR"
-        wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/vs.tar.xz?viasf=1 -O vs.tar.xz
-        if [ $? -ne 0 ]; then
-          echo Download vs failed
-          exit 255
-        fi
-        tar Jxf vs.tar.xz -C "$MOZ_FETCHES_DIR"
-        wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/windows-rs.tar.xz?viasf=1 -O windows-rs.tar.xz
-        if [ $? -ne 0 ]; then
-          echo Download windows-rs failed
-          exit 255
-        fi
-        tar Jxf windows-rs.tar.xz -C "$MOZ_FETCHES_DIR"
-        wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/wine.tar.xz?viasf=1 -O wine.tar.xz
-        if [ $? -ne 0 ]; then
-          echo Download wine failed
-          exit 255
-        fi
-        tar Jxf wine.tar.xz -C "$MOZ_FETCHES_DIR"
-        wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/winsdk.tar.xz?viasf=1 -O winsdk.tar.xz
-        if [ $? -ne 0 ]; then
-          echo Download winsdk failed
-          exit 255
-        fi
-        tar Jxf winsdk.tar.xz -C "$MOZ_FETCHES_DIR"
+        # wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/clang.tar.xz?viasf=1 -O clang.tar.xz
+        # if [ $? -ne 0 ]; then
+        #   echo Download clang failed
+        #   exit 255
+        # fi
+        # tar Jxf clang.tar.xz -C "$MOZ_FETCHES_DIR"
+        # wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/diasdk.tar.xz?viasf=1 -O diasdk.tar.xz
+        # if [ $? -ne 0 ]; then
+        #   echo Download diasdk failed
+        #   exit 255
+        # fi
+        # tar Jxf diasdk.tar.xz -C "$MOZ_FETCHES_DIR"
+        # wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/dxc.tar.xz?viasf=1 -O dxc.tar.xz
+        # if [ $? -ne 0 ]; then
+        #   echo Download dxc failed
+        #   exit 255
+        # fi
+        # tar Jxf dxc.tar.xz -C "$MOZ_FETCHES_DIR"
+        # wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/libportable.tar.xz?viasf=1 -O libportable.tar.xz
+        # if [ $? -ne 0 ]; then
+        #   echo Download libportable failed
+        #   exit 255
+        # fi
+        # tar Jxf libportable.tar.xz -C "$MOZ_FETCHES_DIR/clang"
+        # wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/mozbuild.tar.xz?viasf=1 -O mozbuild.tar.xz
+        # if [ $? -ne 0 ]; then
+        #   echo Download mozbuild failed
+        #   exit 255
+        # fi
+        # tar Jxf mozbuild.tar.xz -C "$MOZ_FETCHES_DIR"
+        # wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/onnxruntime.tar.xz?viasf=1 -O onnxruntime.tar.xz
+        # if [ $? -ne 0 ]; then
+        #   echo Download onnxruntime failed
+        #   exit 255
+        # fi
+        # tar Jxf onnxruntime.tar.xz -C "$MOZ_FETCHES_DIR"
+        # wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/rust.tar.xz?viasf=1 -O rust.tar.xz
+        # if [ $? -ne 0 ]; then
+        #   echo Download rust failed
+        #   exit 255
+        # fi
+        # tar Jxf rust.tar.xz -C "$MOZ_FETCHES_DIR"
+        # wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/vs.tar.xz?viasf=1 -O vs.tar.xz
+        # if [ $? -ne 0 ]; then
+        #   echo Download vs failed
+        #   exit 255
+        # fi
+        # tar Jxf vs.tar.xz -C "$MOZ_FETCHES_DIR"
+        # wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/windows-rs.tar.xz?viasf=1 -O windows-rs.tar.xz
+        # if [ $? -ne 0 ]; then
+        #   echo Download windows-rs failed
+        #   exit 255
+        # fi
+        # tar Jxf windows-rs.tar.xz -C "$MOZ_FETCHES_DIR"
+        # wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/wine.tar.xz?viasf=1 -O wine.tar.xz
+        # if [ $? -ne 0 ]; then
+        #   echo Download wine failed
+        #   exit 255
+        # fi
+        # tar Jxf wine.tar.xz -C "$MOZ_FETCHES_DIR"
+        # wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/winsdk.tar.xz?viasf=1 -O winsdk.tar.xz
+        # if [ $? -ne 0 ]; then
+        #   echo Download winsdk failed
+        #   exit 255
+        # fi
+        # tar Jxf winsdk.tar.xz -C "$MOZ_FETCHES_DIR"
         # wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/profdata.tar.xz?viasf=1 -O profdata.tar.xz
         # if [ $? -ne 0 ]; then
         #   echo Download profdata failed
@@ -137,10 +154,9 @@ jobs:
         echo "fetches:"
         cd "$MOZ_FETCHES_DIR"
         ls -la
-        echo "clang:"
-        ls "$MOZ_FETCHES_DIR/clang" -la
+        # echo "clang:"
+        # ls "$MOZ_FETCHES_DIR/clang" -la
         rm -rf "$MOZBUILD_DOWNLOAD"
         # WINEPREFIX=$MOZ_MOZ_FETCHES_DIR/.wine wine/bin/wine64 --version
-        df -HT /home
         df -h
       shell: bash
