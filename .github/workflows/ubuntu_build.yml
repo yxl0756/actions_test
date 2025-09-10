@@ -35,7 +35,7 @@ jobs:
         ls -la
         if [ -f "mozconfig32" ]; then echo MY_BITS=win32>>$GITHUB_ENV&echo MY_OBJ=obju32-release>>$GITHUB_ENV; fi
         if [ -f "mozconfig64" ]; then echo MY_BITS=win64>>$GITHUB_ENV&echo MY_OBJ=obju64-release>>$GITHUB_ENV; fi
-        m_ver=`cat browser\config\version.txt`
+        m_ver=`cat browser/config/version.txt`
         echo MY_VER=$m_ver>>$GITHUB_ENV
       shell: bash
       
