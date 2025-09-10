@@ -46,10 +46,10 @@ jobs:
         python --version
         which 7z
         which node
+        node --version
         which wget
         which gcc
         df -HT /home
-        node --version
       shell: bash
 
     - name: Download Tools
@@ -128,12 +128,12 @@ jobs:
           exit 255
         fi
         tar Jxf winsdk.tar.xz -C "$MOZ_FETCHES_DIR"
-        wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/profdata.tar.xz?viasf=1 -O profdata.tar.xz
-        if [ $? -ne 0 ]; then
-          echo Download profdata failed
-          exit 255
-        fi
-        tar Jxf profdata.tar.xz -C "$MOZ_FETCHES_DIR"
+        # wget https://master.dl.sourceforge.net/project/libportable/Mozillabuild/profdata.tar.xz?viasf=1 -O profdata.tar.xz
+        # if [ $? -ne 0 ]; then
+        #   echo Download profdata failed
+        #   exit 255
+        # fi
+        # tar Jxf profdata.tar.xz -C "$MOZ_FETCHES_DIR"
         echo "fetches:"
         cd "$MOZ_FETCHES_DIR"
         ls -la
