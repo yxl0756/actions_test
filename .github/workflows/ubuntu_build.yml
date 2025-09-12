@@ -177,7 +177,7 @@ jobs:
         ./fx.sh
         dist_dir=`pwd`
         echo MY_DIST=$dist_dir>>$GITHUB_ENV
-        mv "$MOZBUILD_DOWNLOAD/cbindgen.tar.xz" "$MY_DIST/cbindgen.tar.xz"
+        mv "$MOZBUILD_DOWNLOAD/cbindgen.tar.xz" ./
       shell: bash
 
     - uses: yxl0756/release-action@v1.12.0
