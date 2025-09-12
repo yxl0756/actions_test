@@ -175,14 +175,16 @@ jobs:
         cd "$GITHUB_WORKSPACE"
         chmod +x ./fx.sh
         ./fx.sh
-        mv "$MOZBUILD_DOWNLOAD/cbindgen.tar.xz" "$GITHUB_WORKSPACE/cbindgen.tar.xz"
+        dist_dir=`pwd`
+        echo MY_DIST=$dist_dir>>$GITHUB_ENV
+        mv "$MOZBUILD_DOWNLOAD/cbindgen.tar.xz" "$MY_DIST/cbindgen.tar.xz"
       shell: bash
 
     - uses: yxl0756/release-action@v1.12.0
       with:
         tag: v1.0.1
         name: test v1.0.1
-        artifacts: $GITHUB_WORKSPACE/cbindgen.tar.xz
+        artifacts: ${{ MY_DIST }}/cbindgen.tar.xz
         prerelease: false
         generateReleaseNotes: true
         token: ${{ secrets.RELEASES_TOKEN_YXL0756 }}
