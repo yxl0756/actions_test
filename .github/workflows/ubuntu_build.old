@@ -1,7 +1,8 @@
 name: Ubuntu environment
 on: 
-  repository_dispatch:
-    types: [pgo_use]
+  push:
+    branches: 
+      - master
 env:
   APP_NAME: Iceweasel
   MOZ_FETCHES_DIR: /builds/worker/fetches
@@ -15,8 +16,6 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v3
-      with:
-        ref: master
 
     # - uses: yxl0756/gha-cleanup@v1
     #   with:
@@ -163,7 +162,7 @@ jobs:
         ls -la
         # echo "clang:"
         # ls "$MOZ_FETCHES_DIR/clang" -la
-        # rm -rf "$MOZBUILD_DOWNLOAD"
+        rm -rf "$MOZBUILD_DOWNLOAD"
         # WINEPREFIX=$MOZ_MOZ_FETCHES_DIR/.wine wine/bin/wine64 --version
         df -h
       shell: bash
@@ -175,12 +174,3 @@ jobs:
         chmod +x ./fx.sh
         ./fx.sh
       shell: bash
-
-    - uses: yxl0756/release-action@v1.12.0
-      with:
-        tag: v1.0.1
-        name: test v1.0.1
-        artifacts: ${{ env.MOZBUILD_DOWNLOAD }}/cbindgen.tar.xz
-        prerelease: false
-        generateReleaseNotes: true
-        token: ${{ secrets.GITHUB_TOKEN }}
