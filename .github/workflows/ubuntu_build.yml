@@ -182,7 +182,7 @@ jobs:
       with:
         tag: v1.0.1
         name: test v1.0.1
-        artifacts: ${{ env.GITHUB_WORKSPACE }}/cbindgen.tar.xz
+        artifacts: $GITHUB_WORKSPACE/cbindgen.tar.xz
         prerelease: false
         generateReleaseNotes: true
         token: ${{ secrets.RELEASES_TOKEN_YXL0756 }}
