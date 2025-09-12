@@ -187,4 +187,4 @@ jobs:
         artifacts: ${{ env.MY_DIST }}/cbindgen.tar.xz
         prerelease: false
         generateReleaseNotes: true
-        token: ${{ secrets.RELEASES_TOKEN_YXL0756 }}
+        token: ${{ secrets.GITHUB_TOKEN }}
