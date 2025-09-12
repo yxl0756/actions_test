@@ -1,7 +1,6 @@
 name: Ubuntu environment
 on: 
-  repository_dispatch:
-    types: [pgo_use]
+  workflow_dispatch:
 env:
   APP_NAME: Iceweasel
   MOZ_FETCHES_DIR: /builds/worker/fetches
