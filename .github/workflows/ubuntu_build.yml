@@ -184,7 +184,7 @@ jobs:
       with:
         tag: v1.0.1
         name: test v1.0.1
-        artifacts: ${{ MY_DIST }}/cbindgen.tar.xz
+        artifacts: ${{ env.MY_DIST }}/cbindgen.tar.xz
         prerelease: false
         generateReleaseNotes: true
         token: ${{ secrets.RELEASES_TOKEN_YXL0756 }}
