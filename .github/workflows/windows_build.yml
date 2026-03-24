@@ -36,6 +36,6 @@ jobs:
         call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         clang -v
         echo %PATH%
-        clang-cl++ main.cpp
+        clang-cl main.cpp
         dir /a
       shell: cmd
