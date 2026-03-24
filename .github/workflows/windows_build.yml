@@ -1,0 +1,37 @@
+name: Windows environment
+on: 
+  workflow_dispatch:
+  repository_dispatch:
+    types: [btest]
+
+jobs:
+  fx_build:
+    name: actions_test_build
+    runs-on: windows-2022
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 1
+
+    - name: download LLVM
+      id: llvm_clang
+      shell: cmake -P {0}
+      run: |
+        set(clang_url "https://sourceforge.net/projects/libportable/files/Mozillabuild/clang21-win64.7z/download")
+        file(DOWNLOAD "${clang_url}" d:/clang21-win64.7z SHOW_PROGRESS)
+        execute_process(COMMAND 7z x d:/clang21-win64.7z -aoa WORKING_DIRECTORY d:)
+
+    - name: set_llvm_path
+      id: set_llvm
+      run: |
+        echo "d:\clang\bin" >> $GITHUB_PATH
+      shell: cmd
+
+    - name: Building_test
+      id: clang64
+      run: |
+        cd /d "%GITHUB_WORKSPACE%"
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        where clang
+        echo %PATH%
+      shell: cmd
